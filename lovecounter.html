@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In Love For - Countdown</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s ease-in-out;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ff6f61;
+            animation: pulse 2s infinite;
+        }
+
+        .countdown {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6f61;
+            margin-bottom: 1.5rem;
+        }
+
+        .interactive-btn {
+            padding: 10px 20px;
+            background-color: #ff6f61;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            animation: glow 2s infinite;
+        }
+
+        .interactive-btn:hover {
+            background-color: #ff867c;
+        }
+
+        .interactive-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 10px rgba(255, 106, 98, 1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 106, 98, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(255, 106, 98, 1);
+            }
+        }
+
+        .falling-heart {
+            position: absolute;
+            top: -50px;
+            font-size: 2rem;
+            animation: fall 10s infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -50px;
+                left: random(100%);
+            }
+            100% {
+                top: 100%;
+                left: random(100%);
+            }
+        }
+
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 106, 98, 0.8);
+            border-radius: 50%;
+            animation: particleEffect 1s forwards;
+        }
+
+        @keyframes particleEffect {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+                top: 100vh;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .countdown {
+                font-size: 2rem;
+            }
+            .interactive-btn {
+                padding: 8px 16px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>In Love For</h1>
+        <div class="countdown" id="countdown"></div>
+        <button class="interactive-btn" id="loveButton">Tap to Send Love</button>
+    </div>
+
+    <!-- Music -->
+    <audio id="backgroundMusic" autoplay>
+        <source src="https://drive.google.com/uc?export=download&id=1_vNjoJHltBFZBMhebAL2nc9Czcu9j5ex" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const targetDate = new Date('March 15, 2024 19:00:00').getTime();
+        const countdownElement = document.getElementById('countdown');
+        const loveButton = document.getElementById('loveButton');
+        const music = document.getElementById("backgroundMusic");
+
+        // Function to calculate and update the time difference
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = now - targetDate;
+
+            const months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30)); // Approximate months
+            const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+            if (distance < 0) {
+                countdownElement.innerHTML = "We are together now! ❤️";
+            }
+        }
+
+        // Function to generate falling hearts
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.textContent = '❤️';
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            document.body.appendChild(heart);
+
+            // Remove heart after animation ends
+            setTimeout(() => {
+                heart.remove();
+            }, 10000);  // Heart falls for 10 seconds before it disappears
+        }
+
+        // Function for the interactive particle effect
+        function createParticles(e) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            document.body.appendChild(particle);
+            const x = e.clientX;
+            const y = e.clientY;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1000); // Remove the particle after animation ends
+        }
+
+        // Event listener for the love button
+        loveButton.addEventListener('click', () => {
+            for (let i = 0; i < 5; i++) {  // Creates multiple hearts with each click
+                createFallingHeart();
+            }
+        });
+
+        // Event listener for screen taps to create particle effects
+        document.addEventListener('click', createParticles);
+
+        // Update the countdown every second
+        setInterval(updateCountdown, 1000);
+        // Start by updating the countdown immediately
+        updateCountdown();
+
+        // Music autostart
+        music.play();
+    </script>
+</body>
+</html>
